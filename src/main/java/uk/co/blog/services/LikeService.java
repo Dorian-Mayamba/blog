@@ -10,12 +10,9 @@ import uk.co.blog.repositories.LikeRepository;
 @Service
 @RequiredArgsConstructor
 public class LikeService {
-    private LikeRepository likeRepository;
-
-    private PostService postService;
-
-    private AuthorService authorService;
-
+    private final LikeRepository likeRepository;
+    private final PostService postService;
+    private final AuthorService authorService;
     public void addOrRemoveLike(Long postId, Long authorId){
         likeRepository.findLikeByAuthorIdAndPostId(postId, authorId).ifPresentOrElse
                 (likeRepository::delete, ()->{

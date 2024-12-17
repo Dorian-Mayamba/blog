@@ -1,6 +1,13 @@
 package uk.co.blog.dtos.comments;
 
+import lombok.Data;
+
 import java.time.Instant;
 
-public record CommentDTO(String content, Instant createdAt, Instant updatedAt) {
+@Data
+public class CommentDTO {
+    private String content;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private String authorName;
 }

@@ -1,9 +1,22 @@
 package uk.co.blog.dtos.authors;
 
+import lombok.*;
 import uk.co.blog.dtos.posts.PostDTO;
-import uk.co.blog.dtos.roles.RoleDTO;
+import uk.co.blog.dtos.users.UserDTO;
 
 import java.util.List;
 
-public record AuthorDTO(String name, String email, String password, List<PostDTO> posts, List<RoleDTO> roles) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class AuthorDTO extends UserDTO {
+    private List<PostDTO> posts;
+
+    public List<PostDTO> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<PostDTO> posts) {
+        this.posts = posts;
+    }
 }

@@ -28,6 +28,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.SecurityFilterChain;
+import uk.co.blog.entrypoints.BlogEntryPoint;
 import uk.co.blog.services.UserService;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -39,8 +40,6 @@ public class AppSecurityConfig {
     RSAPrivateKey priv;
     @Value("${jwt.public.key}")
     RSAPublicKey pub;
-
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
         return http
@@ -63,11 +62,10 @@ public class AppSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/likes").authenticated())
 
                 .exceptionHandling(exceptions-> exceptions
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+                        .authenticationEntryPoint(new BlogEntryPoint())
                         .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
                 .build();
     }
-
     @Bean
     public AuthenticationManager authenticationManager(UserService userService, PasswordEncoder passwordEncoder){
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -75,24 +73,20 @@ public class AppSecurityConfig {
         provider.setPasswordEncoder(passwordEncoder);
         return new ProviderManager(provider);
     }
-
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
     @Bean
     JwtDecoder jwtDecoder(){
         return NimbusJwtDecoder.withPublicKey(this.pub).build();
     }
-
     @Bean
     JwtEncoder jwtEncoder(){
         JWK jwk = new RSAKey.Builder(this.pub).privateKey(this.priv).build();
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
-
     @Bean
     public ModelMapper createModelMapper(){
         return new ModelMapper();
